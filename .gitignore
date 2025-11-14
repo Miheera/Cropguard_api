@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# OS files
+.DS_Store
+
+# Optional: Uncomment if you DON'T want to upload models
+# *.pth
