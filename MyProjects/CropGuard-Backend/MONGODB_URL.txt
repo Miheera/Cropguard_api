@@ -1,0 +1,16 @@
+MongoDB Connection URL (Copy-Paste Ready)
+==========================================
+
+Full Connection String:
+mongodb+srv://chaitalimore23_db_user:EWWnTGibLgYxmGxG@clustercg.ntyju2m.mongodb.net/cropguard?retryWrites=true&w=majority
+
+For MongoDB Compass:
+mongodb+srv://chaitalimore23_db_user:EWWnTGibLgYxmGxG@clustercg.ntyju2m.mongodb.net/cropguard?retryWrites=true&w=majority
+
+For .env file (MONGO_URI):
+mongodb+srv://chaitalimore23_db_user:EWWnTGibLgYxmGxG@clustercg.ntyju2m.mongodb.net/cropguard?retryWrites=true&w=majority
+
+Database Name: cropguard
+Cluster: clustercg.ntyju2m.mongodb.net
+Username: chaitalimore23_db_user
+
