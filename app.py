@@ -4,29 +4,37 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse
 from PIL import Image
 import io
-from mobilevit import mobilevit_xxs
 from torchvision import transforms
+from mobilevit import mobilevit_xxs
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CROP_IDENTIFIER_MODEL_DIR = os.path.join(BASE_DIR, "Crop_identifier_model")
+CROP_DISEASE_MODEL_DIR = os.path.join(BASE_DIR, "Crop_disease_models")
 
 CROP_ID_CLASS_NAMES = sorted([
     'Apple','Corn','Guava','Grape','Lemon','Mango','Peach','Pepper','Pomegranate',
     'Potato','Rice','Strawberry','Sugarcane','Tomato','Wheat'
 ])
 
-CROP_ID_MODEL_PATH = "mobilevit_crop_identifier_epoch10.pth"
+CROP_ID_MODEL_PATH = os.path.join(CROP_IDENTIFIER_MODEL_DIR, "mobilevit_new_crop-id_epoch15.pth")
 CROP_TO_DISEASE_MODEL_PATH = {
-    crop: f"mobilevit_{crop}_epoch10.pth" for crop in CROP_ID_CLASS_NAMES
+    crop: os.path.join(CROP_DISEASE_MODEL_DIR, f"mobilevit_{crop}_epoch10.pth")
+    for crop in CROP_ID_CLASS_NAMES
 }
-
 DISEASE_CLASS_NAMES = {'Apple': ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy'], 'Corn': ['Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn_(maize)___Common_rust_', 'Corn_(maize)___healthy', 'Corn_(maize)___Northern_Leaf_Blight'], 'Guava': ['Guava_diseased', 'Guava_healthy'], 'Grape': ['Grape___Black_rot', 'Grape___Esca_(Black_Measles)', 'Grape___healthy', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)'], 'Lemon': ['Lemon_diseased', 'Lemon_healthy'], 'Mango': ['Mango_diseased', 'Mango_healthy'], 'Peach': ['Peach___Bacterial_spot', 'Peach___healthy'], 'Pepper': ['Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy'], 'Pomegranate': ['Pomegranate_diseased', 'Pomegranate_healthy'], 'Potato': ['Potato___Early_blight', 'Potato___healthy', 'Potato___Late_blight'], 'Rice': ['Rice___Brown_Spot', 'Rice___Healthy', 'Rice___Leaf_Blast', 'Rice___Neck_Blast'], 'Strawberry': ['Strawberry___healthy', 'Strawberry___Leaf_scorch'], 'Sugarcane': ['Sugarcane_Bacterial Blight', 'Sugarcane_Healthy', 'Sugarcane_Red Rot'], 'Tomato': ['Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___healthy', 'Tomato___Late_blight', 'Tomato___Leaf_Mold', 'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite', 'Tomato___Target_Spot', 'Tomato___Tomato_mosaic_virus', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus'], 'Wheat': ['Wheat___Brown_Rust', 'Wheat___Healthy', 'Wheat___Yellow_Rust']}
 
 NUM_DISEASES_FOR_CROP = {crop: len(labels) for crop, labels in DISEASE_CLASS_NAMES.items()}
 
+
 test_transforms = transforms.Compose([
     transforms.Resize((256, 256)),
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # Add this!
 ])
+
 
 def load_crop_identifier_model():
     num_crops = len(CROP_ID_CLASS_NAMES)
