@@ -166,23 +166,3 @@ eas build --platform android
 ## Contributing 🤝
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License 📄
-
-This project is licensed under the MIT License.
-
-## Acknowledgments 🙏
-
-- Agricultural experts for domain knowledge
-- Farmers for user feedback
-- Open-source community for amazing tools
-
-## Contact 📧
-
-For support or inquiries:
-- Email: support@cropguard.ai
-- Phone: +91 9876543210
-
----
-
-**Built with ❤️ for farmers everywhere**
